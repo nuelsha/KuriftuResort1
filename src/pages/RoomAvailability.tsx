@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { Menu, Search, Calendar, Wifi, Coffee, Tv, Bath } from 'lucide-react';
-import ReservationModal from '../components/ReservationModal';
-import SuccessModal from '../components/SuccessModal';
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import {
+  Menu,
+  Search,
+  Calendar,
+  Wifi,
+  Coffee,
+  Tv,
+  Bath,
+  X,
+} from "lucide-react";
+import ReservationModal from "../components/ReservationModal";
+import SuccessModal from "../components/SuccessModal";
 
 interface Room {
   id: string;
@@ -18,44 +27,68 @@ export default function RoomAvailability() {
   const { resortId } = useParams();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  
+
   const [selectedDates, setSelectedDates] = useState(
-    searchParams.get('dates') || '04/11/2025 - 04/17/2025'
+    searchParams.get("dates") || "04/11/2025 - 04/17/2025"
   );
   const [showNoRooms, setShowNoRooms] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const rooms: Room[] = [
+  // New states for check-in and check-out times.
+  const [checkInTime, setCheckInTime] = useState("14:00");
+  const [checkOutTime, setCheckOutTime] = useState("11:00");
+
+  // New state to control the feedback popup.
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+
+  // Convert the rooms array into state so that we can update each room's availability.
+  const [roomsData, setRoomsData] = useState<Room[]>([
     {
-      id: 'lake-view-suite',
-      name: 'Lake View Suite',
-      description: 'Luxurious suite overlooking the serene lake with a private balcony, perfect for romantic getaways or peaceful retreats.',
+      id: "lake-view-suite",
+      name: "Lake View Suite",
+      description:
+        "Luxurious suite overlooking the serene lake with a private balcony, perfect for romantic getaways or peaceful retreats.",
       price: 250,
-      image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=2070',
-      amenities: ['Lake View', 'Private Balcony', 'King Size Bed', 'Premium WiFi'],
-      available: true
+      image:
+        "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&q=80&w=2070",
+      amenities: [
+        "Lake View",
+        "Private Balcony",
+        "King Size Bed",
+        "Premium WiFi",
+      ],
+      available: true,
     },
     {
-      id: 'garden-villa',
-      name: 'Garden Villa',
-      description: 'Spacious villa surrounded by lush gardens, featuring traditional Ethiopian architecture with modern amenities.',
+      id: "garden-villa",
+      name: "Garden Villa",
+      description:
+        "Spacious villa surrounded by lush gardens, featuring traditional Ethiopian architecture with modern amenities.",
       price: 350,
-      image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=2070',
-      amenities: ['Private Garden', 'Living Room', 'Mini Bar', 'Outdoor Shower'],
-      available: true
+      image:
+        "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=2070",
+      amenities: [
+        "Private Garden",
+        "Living Room",
+        "Mini Bar",
+        "Outdoor Shower",
+      ],
+      available: true,
     },
     {
-      id: 'presidential-suite',
-      name: 'Presidential Suite',
-      description: 'Our most exclusive accommodation with panoramic views, butler service, and the ultimate luxury experience.',
+      id: "presidential-suite",
+      name: "Presidential Suite",
+      description:
+        "Our most exclusive accommodation with panoramic views, butler service, and the ultimate luxury experience.",
       price: 500,
-      image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=2070',
-      amenities: ['Butler Service', 'Private Pool', 'Dining Room', 'Spa Bath'],
-      available: true
-    }
-  ];
+      image:
+        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=2070",
+      amenities: ["Butler Service", "Private Pool", "Dining Room", "Spa Bath"],
+      available: true,
+    },
+  ]);
 
   const handleCheckAvailability = () => {
     setShowNoRooms(false);
@@ -67,8 +100,111 @@ export default function RoomAvailability() {
   };
 
   const handleConfirmReservation = () => {
-    setShowReservationModal(false);
-    setShowSuccessModal(true);
+    if (selectedRoom) {
+      // Update the room's availability status in the state
+      const updatedRooms = roomsData.map((room) =>
+        room.id === selectedRoom.id ? { ...room, available: false } : room
+      );
+      setRoomsData(updatedRooms);
+      // Close the reservation modal and show the success modal
+      setShowReservationModal(false);
+      setShowSuccessModal(true);
+
+      // After confirming, simulate a random delay (3 to 6 seconds) then show the feedback popup.
+      const randomDelay = Math.floor(Math.random() * 3000) + 3000;
+      setTimeout(() => {
+        setShowFeedbackPopup(true);
+      }, randomDelay);
+    }
+  };
+
+  // Feedback popup component.
+  const FeedbackPopup = () => {
+    const feedbackOptions = [
+      "Food",
+      "Pool",
+      "Waterpark",
+      "Customer Service",
+      "Other",
+    ];
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [showPopup, setShowPopup] = useState(true);
+
+    const handleFeedback = (option: string) => {
+      setSelectedOptions((prev) =>
+        prev.includes(option)
+          ? prev.filter((item) => item !== option)
+          : [...prev, option]
+      );
+    };
+
+    const handleSubmit = () => {
+      console.log("Selected options:", selectedOptions);
+      setShowFeedbackPopup(false);
+    };
+
+    if (!showPopup) return null;
+
+    return (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40">
+        <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-center text-[#1a1a1a]">
+              😊 We hope you're enjoying your stay!
+            </h3>
+            <button
+              onClick={() => setShowFeedbackPopup(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <p className="text-sm text-gray-600 mb-4 text-center">
+            What did you enjoy the most? (Select multiple if you like!)
+          </p>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {feedbackOptions.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleFeedback(option)}
+                className={`py-2 rounded transition ${
+                  selectedOptions.includes(option)
+                    ? "bg-green-600 text-white"
+                    : "bg-[#1a1a1a] text-white hover:bg-black"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm text-gray-700 mb-1">
+              💬 Any comments, suggestions or thoughts?
+            </label>
+            <textarea
+              placeholder="We'd love to hear your feedback!"
+              className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none"
+              rows={3}
+              onChange={(e) => setSuggestionText(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              onClick={handleSubmit}
+              className="flex-1 bg-[#1a1a1a] text-white py-2 rounded hover:bg-black transition"
+            >
+              Submit Feedback 🙌
+            </button>
+            <button
+              onClick={() => setShowFeedbackPopup(false)}
+              className="flex-1 bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200 transition"
+            >
+              Skip
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -79,7 +215,7 @@ export default function RoomAvailability() {
           <button className="lg:hidden">
             <Menu className="w-6 h-6" />
           </button>
-          
+
           <div className="flex items-center">
             <img src="/logo.png" alt="Kuriftu Resorts" className="h-12" />
           </div>
@@ -97,18 +233,18 @@ export default function RoomAvailability() {
 
       {/* Hero Image */}
       <div className="w-full h-[300px] relative">
-        <img 
+        <img
           src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2070"
           alt="Resort Room"
           className="w-full h-full object-cover"
         />
       </div>
 
-      {/* Date Selection */}
+      {/* Date and Time Selection */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h2 className="text-xl font-light mb-4">Select Date</h2>
-          <div className="flex gap-4">
+          <h2 className="text-xl font-light mb-4">Select Date & Time</h2>
+          <div className="flex gap-4 mb-4">
             <div className="flex-1">
               <input
                 type="text"
@@ -124,6 +260,27 @@ export default function RoomAvailability() {
               Check Availability
             </button>
           </div>
+          {/* New Check-in and Checkout Time Fields */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm mb-1">Check-in Time</label>
+              <input
+                type="time"
+                value={checkInTime}
+                onChange={(e) => setCheckInTime(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm mb-1">Check-out Time</label>
+              <input
+                type="time"
+                value={checkOutTime}
+                onChange={(e) => setCheckOutTime(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Available Rooms */}
@@ -131,20 +288,25 @@ export default function RoomAvailability() {
           <div className="mt-12 space-y-8">
             <h2 className="text-2xl font-light">Available Rooms</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {rooms.map((room) => (
-                <div key={room.id} className="bg-white rounded-xl overflow-hidden shadow-sm">
-                  <img 
-                    src={room.image} 
+              {roomsData.map((room) => (
+                <div
+                  key={room.id}
+                  className="bg-white rounded-xl overflow-hidden shadow-sm"
+                >
+                  <img
+                    src={room.image}
                     alt={room.name}
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-medium mb-2">{room.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{room.description}</p>
-                    
+                    <p className="text-gray-600 text-sm mb-4">
+                      {room.description}
+                    </p>
+
                     <div className="flex flex-wrap gap-2 mb-4">
                       {room.amenities.map((amenity, index) => (
-                        <span 
+                        <span
                           key={index}
                           className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
                         >
@@ -160,9 +322,14 @@ export default function RoomAvailability() {
                       </div>
                       <button
                         onClick={() => handleReserveClick(room)}
-                        className="bg-[#1a1a1a] text-white px-6 py-2 rounded-lg hover:bg-black transition"
+                        disabled={!room.available}
+                        className={`px-6 py-2 rounded-lg transition text-white ${
+                          room.available
+                            ? "bg-[#1a1a1a] hover:bg-black"
+                            : "bg-green-600 cursor-not-allowed"
+                        }`}
                       >
-                        Reserve
+                        {room.available ? "Reserve" : "Reserved by You"}
                       </button>
                     </div>
                   </div>
@@ -178,11 +345,13 @@ export default function RoomAvailability() {
             <div className="inline-block p-8 bg-white rounded-lg shadow-sm">
               <div className="w-16 h-16 mx-auto mb-4 text-[#CD7F32]">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-7h10v2H7v-2zm2-3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                  <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm-5-7h10v2H7v-2zm2-3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm6 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
                 </svg>
               </div>
               <h3 className="text-2xl text-gray-600 mb-2">No Room available</h3>
-              <p className="text-gray-500">Please Select Different Dates and Try Again</p>
+              <p className="text-gray-500">
+                Please Select Different Dates and Try Again
+              </p>
             </div>
           </div>
         )}
@@ -204,6 +373,9 @@ export default function RoomAvailability() {
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
       />
+
+      {/* Feedback Popup Modal */}
+      {showFeedbackPopup && <FeedbackPopup />}
     </div>
   );
 }
