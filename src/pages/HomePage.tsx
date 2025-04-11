@@ -13,6 +13,9 @@ import {
   Utensils,
   Globe,
   Space as Spa,
+  Facebook,
+  Instagram,
+  Twitter,
 } from "lucide-react";
 
 function HomePage() {
@@ -267,6 +270,57 @@ function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-[#1a1a1a] text-white py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">{t("aboutUs")}</h3>
+              <p className="text-gray-400">{t("aboutUsDesc")}</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">{t("contact")}</h3>
+              <p className="text-gray-400">{t("address")}</p>
+              <p className="text-gray-400">{t("phone")}</p>
+              <p className="text-gray-400">{t("email")}</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">{t("followUs")}</h3>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Twitter className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">{t("newsletter")}</h3>
+              <div className="flex">
+                <input
+                  type="email"
+                  placeholder={t("emailPlaceholder")}
+                  className="px-4 py-2 rounded-l-full bg-white/10 text-white placeholder-gray-400 focus:outline-none"
+                />
+                <button className="px-4 py-2 bg-white text-[#1a1a1a] rounded-r-full hover:bg-gray-200">
+                  {t("subscribe")}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p>
+              &copy; {new Date().getFullYear()} Kuriftu Resorts.{" "}
+              {t("allRightsReserved")}
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

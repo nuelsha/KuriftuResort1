@@ -26,6 +26,18 @@ export const translations = {
       "Rejuvenate your body and soul with our world-class spa treatments",
     storyDescription:
       "Located on the northern tip of Bishoftu, encompassing the smallest of the four lakes lies our flagship resort, Kuriftu Resort & Spa Bishoftu. Born from Mr. Tadiwos's vision to create luxury resort destinations in neighboring cities of the capital, this resort made its mark in 2007 as the first 5-star resort in the country.",
+    aboutUs: "About Us",
+    aboutUsDesc:
+      "Experience luxury hospitality at its finest with Kuriftu Resorts.",
+    contact: "Contact",
+    address: "123 Resort Street, Bishoftu, Ethiopia",
+    phone: "+251 123 456 789",
+    email: "info@kurifturesorts.com",
+    followUs: "Follow Us",
+    newsletter: "Newsletter",
+    emailPlaceholder: "Enter your email",
+    subscribe: "Subscribe",
+    allRightsReserved: "All rights reserved",
   },
   am: {
     signUp: "ይመዝገቡ",
@@ -51,6 +63,17 @@ export const translations = {
     luxuryWellnessDesc: "በዓለም አቀፍ የስፓ ሕክምናችን ጋር ሰውነትዎንና ነፍስዎን እንደገና ያሻሽሉ",
     storyDescription:
       "በብሾፍቱ ሰሜን ጫፍ ላይ፣ ከአራቱ ሐይቆች ትንሽ ያለው የሆነው የተወዳጅ ሪዞርት እንደ ቅርቡ የተገነባው ኩሪፍቱ ሪዞርት & ስፓ ብሾፍቱ ነው። ከMr. Tadiwos ራዕይ የተነሳ በመንግስት ከተሞች ላይ የፍጹም ሪዞርት መዳረሻዎችን ለመፍጠር የተሰራ ይህ ሪዞርት በ2007 እንደ አገሩ የመጀመሪያ 5-ኮከብ ሪዞርት እንዲሆን ያሳያል",
+    aboutUs: "ስለ እኛ",
+    aboutUsDesc: "በኩሪፍቱ ሪዞርት የተሻለውን የሆስፒታሊቲ ልምድ ይለማመዱ።",
+    contact: "አግኙን",
+    address: "123 ሪዞርት ጎዳና፣ ቢሾፍቱ፣ ኢትዮጵያ",
+    phone: "+251 123 456 789",
+    email: "info@kurifturesorts.com",
+    followUs: "ተከተሉን",
+    newsletter: "ዜና ደብተር",
+    emailPlaceholder: "ኢሜልዎን ያስገቡ",
+    subscribe: "ይመዝገቡ",
+    allRightsReserved: "ሁሉም መብቶች የተጠበቁ ናቸው",
   },
   fr: {
     signUp: "S'inscrire",

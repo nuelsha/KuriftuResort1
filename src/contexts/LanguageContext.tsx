@@ -3,7 +3,11 @@ import { translations } from "../i18n/translations";
 
 type Language = "en" | "am" | "fr" | "om";
 
-type TranslationKey = keyof typeof translations.en;
+type TranslationKey =
+  | keyof typeof translations.en
+  | keyof typeof translations.am
+  | keyof typeof translations.fr
+  | keyof typeof translations.om;
 
 interface LanguageContextType {
   language: Language;
@@ -28,7 +32,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [language]);
 
   const t = (key: TranslationKey) => {
-    return translations[language][key] || key;
+    return (
+      (translations[language] as Record<TranslationKey, string>)[key] || key
+    );
   };
 
   return (
