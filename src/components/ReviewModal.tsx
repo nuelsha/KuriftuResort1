@@ -6,6 +6,9 @@ interface ReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   resortName: string;
+  reviews: number[];
+  comments: string[];
+  onAddReview: (rating: number, comment: string) => void;
 }
 
 interface Review {
@@ -19,43 +22,21 @@ export default function ReviewModal({
   isOpen,
   onClose,
   resortName,
+  reviews,
+  comments,
+  onAddReview,
 }: ReviewModalProps) {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
   const [showAddReview, setShowAddReview] = useState(false);
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      rating: 5,
-      comment:
-        "Amazing experience! The resort exceeded all expectations. The staff was incredibly attentive and the facilities were world-class.",
-      author: "Sarah M.",
-      date: "2 days ago",
-    },
-    {
-      rating: 4,
-      comment:
-        "Beautiful location and excellent service. The spa treatments were particularly memorable.",
-      author: "John D.",
-      date: "1 week ago",
-    },
-  ]);
 
   const handleSubmitReview = () => {
     if (!comment || !name) return;
-
-    const newReview: Review = {
-      rating,
-      comment,
-      author: name,
-      date: "Just now",
-    };
-
-    setReviews([newReview, ...reviews]);
+    onAddReview(rating, comment);
     setComment("");
     setName("");
     setRating(5);
-    // Hide the add review form after submitting if desired.
     setShowAddReview(false);
   };
 
@@ -141,26 +122,22 @@ export default function ReviewModal({
 
           {/* Existing Reviews */}
           <div className="space-y-4 max-h-60 overflow-y-auto">
-            {reviews.map((review, index) => (
+            {reviews.map((rating: number, index: number) => (
               <div key={index} className="border-b pb-4">
                 <div className="flex items-center mb-2">
                   <div className="flex text-yellow-400">
-                    {[...Array(review.rating)].map((_, i) => (
+                    {[...Array(rating)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-current" />
                     ))}
-                    {[...Array(5 - review.rating)].map((_, i) => (
+                    {[...Array(5 - rating)].map((_, i) => (
                       <Star
-                        key={i + review.rating}
+                        key={i + rating}
                         className="w-4 h-4 text-gray-300 fill-current"
                       />
                     ))}
                   </div>
-                  <span className="ml-2 text-sm text-gray-600">
-                    {review.date}
-                  </span>
                 </div>
-                <p className="text-gray-700">"{review.comment}"</p>
-                <p className="text-sm text-gray-500 mt-1">- {review.author}</p>
+                <p className="text-gray-700">"{comments[index]}"</p>
               </div>
             ))}
           </div>

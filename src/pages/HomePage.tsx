@@ -67,11 +67,47 @@ function HomePage() {
     const [messages, setMessages] = React.useState([]);
     const [currentMessage, setCurrentMessage] = React.useState("");
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
       if (!currentMessage.trim()) return;
-      const newMessage = { text: currentMessage, sender: "user" };
-      setMessages([...messages, newMessage]);
+
+      // Add user's message
+      const userMessage = { text: currentMessage, sender: "user" };
+      setMessages((prev) => [...prev, userMessage]);
+      const textToSend = currentMessage;
       setCurrentMessage("");
+
+      try {
+        const response = await fetch(
+          "https://api.mistral.ai/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer 7pe3roabiqOZV3bUCcVsevNwX3D3pyxL`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "mistral-medium",
+              messages: [{ role: "user", content: textToSend }],
+            }),
+          }
+        );
+
+        const data = await response.json();
+        const botReply =
+          data?.choices?.[0]?.message?.content ||
+          "Sorry, I couldn't get a response.";
+
+        setMessages((prev) => [...prev, { text: botReply, sender: "bot" }]);
+      } catch (err) {
+        console.error("API error:", err);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: "Oops! Something went wrong. Please try again later.",
+            sender: "bot",
+          },
+        ]);
+      }
     };
 
     const handleKeyDown = (e) => {
@@ -109,6 +145,10 @@ function HomePage() {
               {messages.length === 0 && (
                 <div className="text-gray-500">
                   Hello! How can I help you today?
+                  <br />
+                  <p className="text-blue-500 text-sm text-center  underline hover:text-blue-400 hover:cursor-pointer">
+                    Talk to live support
+                  </p>
                 </div>
               )}
               {messages.map((msg, index) => (
