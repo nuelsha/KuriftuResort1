@@ -21,7 +21,7 @@ import {
 
 function HomePage() {
   const navigate = useNavigate();
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedLocation, setSelectedLocation] = React.useState("Bishoftu");
   const [selectedDates, setSelectedDates] = React.useState(
@@ -33,12 +33,13 @@ function HomePage() {
     navigate(`/rooms/bishoftu?dates=${selectedDates}`);
   };
 
-  // ChatBot component with its own message state and local language for chat popup.
+  // ChatBot component with local chat language independent of homepage language.
   const ChatBot = () => {
     const [chatOpen, setChatOpen] = React.useState(false);
     // Maintain a separate state for the chat popup language.
     const [chatLanguage, setChatLanguage] = React.useState("en");
-    // Chat specific translations
+
+    // Chat translations for the popup texts.
     const chatTranslations = {
       en: {
         chatSupport: "Chat Support",
@@ -66,10 +67,8 @@ function HomePage() {
     const [messages, setMessages] = React.useState([]);
     const [currentMessage, setCurrentMessage] = React.useState("");
 
-    // Function to handle sending the message.
     const sendMessage = () => {
       if (!currentMessage.trim()) return;
-      // Create new message object with sender as "user"
       const newMessage = { text: currentMessage, sender: "user" };
       setMessages([...messages, newMessage]);
       setCurrentMessage("");
