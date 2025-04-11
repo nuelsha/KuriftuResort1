@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Dialog } from '@headlessui/react';
-import { X, Star } from 'lucide-react';
+import React, { useState } from "react";
+import { Dialog } from "@headlessui/react";
+import { X, Star } from "lucide-react";
 
 interface ReviewModalProps {
   isOpen: boolean;
@@ -15,23 +15,30 @@ interface Review {
   date: string;
 }
 
-export default function ReviewModal({ isOpen, onClose, resortName }: ReviewModalProps) {
+export default function ReviewModal({
+  isOpen,
+  onClose,
+  resortName,
+}: ReviewModalProps) {
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
-  const [name, setName] = useState('');
+  const [comment, setComment] = useState("");
+  const [name, setName] = useState("");
+  const [showAddReview, setShowAddReview] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([
     {
       rating: 5,
-      comment: "Amazing experience! The resort exceeded all expectations. The staff was incredibly attentive and the facilities were world-class.",
+      comment:
+        "Amazing experience! The resort exceeded all expectations. The staff was incredibly attentive and the facilities were world-class.",
       author: "Sarah M.",
-      date: "2 days ago"
+      date: "2 days ago",
     },
     {
       rating: 4,
-      comment: "Beautiful location and excellent service. The spa treatments were particularly memorable.",
+      comment:
+        "Beautiful location and excellent service. The spa treatments were particularly memorable.",
       author: "John D.",
-      date: "1 week ago"
-    }
+      date: "1 week ago",
+    },
   ]);
 
   const handleSubmitReview = () => {
@@ -41,72 +48,95 @@ export default function ReviewModal({ isOpen, onClose, resortName }: ReviewModal
       rating,
       comment,
       author: name,
-      date: "Just now"
+      date: "Just now",
     };
 
     setReviews([newReview, ...reviews]);
-    setComment('');
-    setName('');
+    setComment("");
+    setName("");
     setRating(5);
+    // Hide the add review form after submitting if desired.
+    setShowAddReview(false);
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      
+
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <Dialog.Panel className="w-full max-w-md bg-white rounded-xl p-6">
           <div className="flex justify-between items-center mb-4">
-            <Dialog.Title className="text-xl font-semibold">Reviews for {resortName}</Dialog.Title>
+            <Dialog.Title className="text-xl font-semibold">
+              Reviews for {resortName}
+            </Dialog.Title>
             <button onClick={onClose}>
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Add Review Form */}
+          {/* Add Review Form Toggle */}
           <div className="border-b pb-4 mb-4">
-            <h3 className="text-lg font-medium mb-3">Add Your Review</h3>
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Rating</label>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => setRating(star)}
-                      className={`${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-                    >
-                      <Star className="w-6 h-6 fill-current" />
-                    </button>
-                  ))}
+            {showAddReview ? (
+              <>
+                <h3 className="text-lg font-medium mb-3">Add Your Review</h3>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Rating
+                    </label>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => setRating(star)}
+                          className={`${
+                            star <= rating ? "text-yellow-400" : "text-gray-300"
+                          }`}
+                        >
+                          <Star className="w-6 h-6 fill-current" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2"
+                      placeholder="Enter your name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">
+                      Comment
+                    </label>
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="w-full border rounded-lg px-3 py-2 h-24"
+                      placeholder="Share your experience..."
+                    />
+                  </div>
+                  <button
+                    onClick={handleSubmitReview}
+                    className="w-full bg-[#1a1a1a] text-white py-2 rounded-lg hover:bg-black transition"
+                  >
+                    Submit Review
+                  </button>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Your Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2"
-                  placeholder="Enter your name"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-1">Comment</label>
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 h-24"
-                  placeholder="Share your experience..."
-                />
-              </div>
+              </>
+            ) : (
               <button
-                onClick={handleSubmitReview}
+                onClick={() => setShowAddReview(true)}
                 className="w-full bg-[#1a1a1a] text-white py-2 rounded-lg hover:bg-black transition"
               >
-                Submit Review
+                Add Review
               </button>
-            </div>
+            )}
           </div>
 
           {/* Existing Reviews */}
@@ -119,10 +149,15 @@ export default function ReviewModal({ isOpen, onClose, resortName }: ReviewModal
                       <Star key={i} className="w-4 h-4 fill-current" />
                     ))}
                     {[...Array(5 - review.rating)].map((_, i) => (
-                      <Star key={i + review.rating} className="w-4 h-4 text-gray-300 fill-current" />
+                      <Star
+                        key={i + review.rating}
+                        className="w-4 h-4 text-gray-300 fill-current"
+                      />
                     ))}
                   </div>
-                  <span className="ml-2 text-sm text-gray-600">{review.date}</span>
+                  <span className="ml-2 text-sm text-gray-600">
+                    {review.date}
+                  </span>
                 </div>
                 <p className="text-gray-700">"{review.comment}"</p>
                 <p className="text-sm text-gray-500 mt-1">- {review.author}</p>

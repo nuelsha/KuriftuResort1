@@ -16,11 +16,12 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  MessageSquare,
 } from "lucide-react";
 
 function HomePage() {
   const navigate = useNavigate();
-  const { language, setLanguage, t } = useLanguage();
+  const { language, t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedLocation, setSelectedLocation] = React.useState("Bishoftu");
   const [selectedDates, setSelectedDates] = React.useState(
@@ -30,6 +31,127 @@ function HomePage() {
 
   const handleCheckAvailability = () => {
     navigate(`/rooms/bishoftu?dates=${selectedDates}`);
+  };
+
+  // ChatBot component with its own message state and local language for chat popup.
+  const ChatBot = () => {
+    const [chatOpen, setChatOpen] = React.useState(false);
+    // Maintain a separate state for the chat popup language.
+    const [chatLanguage, setChatLanguage] = React.useState("en");
+    // Chat specific translations
+    const chatTranslations = {
+      en: {
+        chatSupport: "Chat Support",
+        typeYourMessage: "Type your message...",
+        send: "Send",
+      },
+      am: {
+        chatSupport: "የውጭ ድጋፍ",
+        typeYourMessage: "መልእክት ያስገቡ...",
+        send: "ላክ",
+      },
+      fr: {
+        chatSupport: "Assistance Chat",
+        typeYourMessage: "Tapez votre message...",
+        send: "Envoyer",
+      },
+      om: {
+        chatSupport: "Gargaarsa Chat",
+        typeYourMessage: "Ergaa barreessi...",
+        send: "Ergi",
+      },
+    };
+
+    // State to manage chat messages and current input.
+    const [messages, setMessages] = React.useState([]);
+    const [currentMessage, setCurrentMessage] = React.useState("");
+
+    // Function to handle sending the message.
+    const sendMessage = () => {
+      if (!currentMessage.trim()) return;
+      // Create new message object with sender as "user"
+      const newMessage = { text: currentMessage, sender: "user" };
+      setMessages([...messages, newMessage]);
+      setCurrentMessage("");
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    };
+
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        {chatOpen ? (
+          <div className="bg-white shadow-xl rounded-lg w-80 h-96 flex flex-col">
+            <div className="bg-[#1a1a1a] text-white p-4 flex flex-col rounded-t-lg">
+              <div className="flex justify-between items-center">
+                <span>{chatTranslations[chatLanguage].chatSupport}</span>
+                <button onClick={() => setChatOpen(false)}>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="mt-2">
+                <select
+                  value={chatLanguage}
+                  onChange={(e) => setChatLanguage(e.target.value)}
+                  className="text-sm p-1 rounded bg-white text-black border border-gray-300"
+                >
+                  <option value="en">English</option>
+                  <option value="am">አማርኛ</option>
+                  <option value="fr">Français</option>
+                  <option value="om">Afaan Oromoo</option>
+                </select>
+              </div>
+            </div>
+            <div className="p-4 flex-grow overflow-y-auto space-y-2">
+              {messages.length === 0 && (
+                <div className="text-gray-500">
+                  Hello! How can I help you today?
+                </div>
+              )}
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`max-w-xs p-2 rounded-lg ${
+                    msg.sender === "user"
+                      ? "bg-blue-100 self-end text-right"
+                      : "bg-gray-100 self-start text-left"
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+            <div className="p-4 flex">
+              <input
+                type="text"
+                placeholder={chatTranslations[chatLanguage].typeYourMessage}
+                value={currentMessage}
+                onChange={(e) => setCurrentMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full border rounded-l-lg px-3 py-2 focus:outline-none"
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-[#1a1a1a] text-white px-4 py-2 rounded-r-lg hover:bg-black transition"
+              >
+                {chatTranslations[chatLanguage].send}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="bg-[#1a1a1a] p-3 rounded-full shadow-lg hover:bg-black transition"
+          >
+            <MessageSquare className="w-6 h-6 text-white" />
+          </button>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -321,6 +443,9 @@ function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot Assistance */}
+      <ChatBot />
     </div>
   );
 }

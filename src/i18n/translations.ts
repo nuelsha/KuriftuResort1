@@ -111,7 +111,7 @@ export const translations = {
     experiences: "Qo'annoo",
     wellness: "Fayyaa",
     events: "Hojii",
-    welcome: "Baga Nagaan Dhufte",
+    welcome: "Baga Nagaan Dhuftan",
     experience: "Qananii Itiyoophiyaa keessatti qo'annoo argadhu",
     location: "Bakka",
     checkInOut: "Seenuu - Ba'uu",
