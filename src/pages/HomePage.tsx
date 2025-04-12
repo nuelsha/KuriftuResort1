@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useAuth } from "../contexts/AuthContext";
 import {
   Menu,
   X,
@@ -17,11 +18,14 @@ import {
   Instagram,
   Twitter,
   MessageSquare,
+  User,
+  LogOut,
 } from "lucide-react";
 
 function HomePage() {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useLanguage();
+  const { user, signOut } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedLocation, setSelectedLocation] = React.useState("Bishoftu");
   const [selectedDates, setSelectedDates] = React.useState(
@@ -31,6 +35,11 @@ function HomePage() {
 
   const handleCheckAvailability = () => {
     navigate(`/rooms/bishoftu?dates=${selectedDates}`);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
   };
 
   // ChatBot component with local chat language independent of homepage language.
@@ -202,7 +211,10 @@ function HomePage() {
           </button>
 
           <div className="flex items-center space-x-12">
-            <div className="flex items-center">
+            <div
+              className="flex items-center cursor-pointer"
+              onClick={() => navigate("/")}
+            >
               <Bird className="w-8 h-8 text-[#1a1a1a]" />
               <span className="ml-2 text-xl font-semibold">
                 KURIFTU RESORTS
@@ -243,9 +255,33 @@ function HomePage() {
                 </button>
               </div>
             </div>
-            <button className="px-6 py-2 border border-[#1a1a1a] rounded-full hover:bg-gray-50">
-              {t("signUp")}
-            </button>
+
+            {user ? (
+              <>
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="flex items-center space-x-2 px-4 py-2 border border-[#1a1a1a] rounded-full hover:bg-gray-50"
+                >
+                  <User className="w-5 h-5" />
+                  <span>{user.user_metadata?.full_name || "Dashboard"}</span>
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2 px-4 py-2 border border-[#1a1a1a] rounded-full hover:bg-gray-50"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>{t("signOut")}</span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="px-6 py-2 border border-[#1a1a1a] rounded-full hover:bg-gray-50"
+              >
+                {t("login")}
+              </button>
+            )}
+
             <button
               onClick={() => navigate("/resorts")}
               className="px-6 py-2 bg-[#1a1a1a] text-white rounded-full hover:bg-black"
@@ -280,23 +316,81 @@ function HomePage() {
             <a href="#" className="block text-lg">
               {t("events")}
             </a>
+            <div className="pt-6 mt-6 border-t border-gray-200 flex flex-col space-y-4">
+              {user ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate("/dashboard");
+                    }}
+                    className="flex items-center space-x-2 text-lg text-[#1a1a1a]"
+                  >
+                    <User className="w-5 h-5" />
+                    <span>{user.user_metadata?.full_name || "Dashboard"}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="flex items-center space-x-2 text-lg text-[#1a1a1a]"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>{t("signOut")}</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    navigate("/login");
+                  }}
+                  className="block text-lg text-[#1a1a1a]"
+                >
+                  {t("login")}
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  navigate("/resorts");
+                }}
+                className="mt-4 w-full bg-[#1a1a1a] text-white rounded-full py-2 hover:bg-black"
+              >
+                {t("reserve")}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       <section className="relative h-screen">
-        <img
-          src="https://images.unsplash.com/photo-1582610116397-edb318620f90?auto=format&fit=crop&q=80&w=2070"
-          alt="Luxury Resort"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <iframe
+            src="https://player.vimeo.com/video/969906959?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
+            className="w-[102%] h-[102%] object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+            frameBorder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            title="Kuriftu Resorts Background Video"
+            style={{
+              objectFit: "cover",
+              width: "102%",
+              height: "102%",
+              transform: "translate(-50%, -50%) scale(1.02)",
+            }}
+          ></iframe>
+        </div>
+        <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="text-5xl md:text-7xl font-light mb-6">
+            <h1 className="text-5xl md:text-7xl font-light mb-6 drop-shadow-lg">
               {t("welcome")}
             </h1>
-            <p className="text-xl md:text-2xl mb-8">{t("experience")}</p>
+            <p className="text-xl md:text-2xl mb-8 drop-shadow-lg">
+              {t("experience")}
+            </p>
           </div>
         </div>
       </section>

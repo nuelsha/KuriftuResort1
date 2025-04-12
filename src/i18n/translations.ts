@@ -1,6 +1,8 @@
 export const translations = {
   en: {
     signUp: "Sign Up",
+    login: "Login",
+    signOut: "Sign Out",
     reserve: "Reserve",
     destinations: "Destinations",
     resorts: "Resorts",
@@ -41,6 +43,8 @@ export const translations = {
   },
   am: {
     signUp: "ይመዝገቡ",
+    login: "ግባ",
+    signOut: "ውጣ",
     reserve: "ያስያዙ",
     destinations: "መዳረሻዎች",
     resorts: "ሪዞርቶች",
@@ -77,6 +81,8 @@ export const translations = {
   },
   fr: {
     signUp: "S'inscrire",
+    login: "Connexion",
+    signOut: "Déconnexion",
     reserve: "Réserver",
     destinations: "Destinations",
     resorts: "Résorts",
@@ -105,6 +111,8 @@ export const translations = {
   },
   om: {
     signUp: "Galmeessi",
+    login: "Seeni",
+    signOut: "Bahi",
     reserve: "Qindeessu",
     destinations: "Bakka",
     resorts: "Resortii",
