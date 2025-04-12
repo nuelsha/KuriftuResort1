@@ -178,10 +178,8 @@ export default function Dashboard() {
                 className="flex-shrink-0 flex items-center cursor-pointer"
                 onClick={() => navigate("/")}
               >
-                <Bird className="h-8 w-8 text-[#1a1a1a]" />
-                <span className="ml-2 text-xl font-semibold">
-                  KURIFTU RESORTS
-                </span>
+                
+                
               </div>
             </div>
             <div className="flex items-center space-x-4">

@@ -951,8 +951,9 @@ const ChatBot = () => {
 
           <div className="flex items-center space-x-12">
             <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
-              <Bird className="w-8 h-8 text-[#1a1a1a]" />
-              <span className="ml-2 text-xl font-semibold">KURIFTU RESORTS</span>
+            <div className="flex items-center">
+            <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
+          </div>
             </div>
           </div>
 

@@ -39,7 +39,7 @@ export default function ResortSelection() {
       location: "Awash, Ethiopia",
       price: 250,
       image:
-        "https://images.unsplash.com/photo-1582610116397-edb318620f90?auto=format&fit=crop&q=80&w=2070",
+        "https://kurifturesorts.com/_nuxt/img/awash-cover.8aba739.webp",
       available: false,
     },
     {
@@ -48,7 +48,7 @@ export default function ResortSelection() {
       location: "Bishoftu, Ethiopia",
       price: 173,
       image:
-        "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2070",
+        "https://kurifturesorts.com/_nuxt/img/2.46e7606.webp",
       available: true,
     },
     {
@@ -57,7 +57,16 @@ export default function ResortSelection() {
       location: "Addis Ababa, Ethiopia",
       price: 135,
       image:
-        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=2070",
+        "https://kurifturesorts.com/_nuxt/img/Glamping.75aadd4.webp",
+      available: true,
+    },
+    {
+      id: "entoto",
+      name: "Kuriftu Resort & Spa and Lake Tana",
+      location: "Addis Ababa, Ethiopia",
+      price: 135,
+      image:
+        "https://kurifturesorts.com/_nuxt/img/Tana.303f00c.webp",
       available: true,
     },
   ];
@@ -99,7 +108,7 @@ export default function ResortSelection() {
           </button>
 
           <div className="flex items-center">
-            <img src="/logo.png" alt="Kuriftu Resorts" className="h-12" />
+            <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
           </div>
 
           <div className="flex items-center space-x-4">

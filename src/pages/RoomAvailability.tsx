@@ -60,7 +60,7 @@ export default function RoomAvailability() {
   const [roomsData, setRoomsData] = useState<Room[]>([
     {
       id: "lake-view-suite",
-      name: "Lake View Suite",
+      name: "Ethiopia",
       description:
         "Luxurious suite overlooking the serene lake with a private balcony, perfect for romantic getaways or peaceful retreats.",
       price: 250,
@@ -76,7 +76,7 @@ export default function RoomAvailability() {
     },
     {
       id: "garden-villa",
-      name: "Garden Villa",
+      name: "Djibuti",
       description:
         "Spacious villa surrounded by lush gardens, featuring traditional Ethiopian architecture with modern amenities.",
       price: 350,
@@ -92,7 +92,7 @@ export default function RoomAvailability() {
     },
     {
       id: "presidential-suite",
-      name: "Presidential Suite",
+      name: "Eritrea",
       description:
         "Our most exclusive accommodation with panoramic views, butler service, and the ultimate luxury experience.",
       price: 500,
