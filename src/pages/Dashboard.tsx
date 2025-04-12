@@ -524,9 +524,9 @@ export default function Dashboard() {
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn">
         <div className="relative">
-          <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-amber-600 to-amber-400 opacity-20"></div>
+          <div className="absolute top-0 left-0 w-full h-16"></div>
           <div className="pt-12 px-8 pb-6 relative">
-            <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400"></div>
+            <div className="absolute top-0 right-0 left-0 h-1"></div>
             <h2 className="text-2xl font-serif text-center text-gray-900 mb-2">Share Your Experience</h2>
             <p className="text-center text-gray-500 text-sm mb-6">Your feedback helps us enhance your future stays</p>
 
