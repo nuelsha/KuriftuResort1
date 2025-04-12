@@ -160,11 +160,15 @@ export default function RoomAvailability() {
           timestamp: new Date(),
         });
         console.log("Feedback submitted with ID:", docRef.id);
+        setShowFeedbackPopup(false);
       } catch (error) {
         console.error("Error adding feedback:", error);
+        // Show error message to user
+        alert(
+          "Unable to submit feedback. Please try again later or contact support."
+        );
+        setShowFeedbackPopup(false);
       }
-      // Close the popup regardless of success (or display an error if needed)
-      setShowFeedbackPopup(false);
     };
 
     if (!showPopup) return null;
