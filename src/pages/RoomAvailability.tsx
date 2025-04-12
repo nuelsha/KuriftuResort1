@@ -246,7 +246,7 @@ export default function RoomAvailability() {
           </button>
 
           <div className="flex items-center">
-            <img src="/logo.png" alt="Kuriftu Resorts" className="h-12" />
+            <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
           </div>
 
           <div className="flex items-center space-x-4">

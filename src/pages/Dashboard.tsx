@@ -519,7 +519,6 @@ export default function Dashboard() {
     </div>
   )
 
-  // Add the DetailedFeedbackModal component
   const DetailedFeedbackModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn">
@@ -994,8 +993,9 @@ export default function Dashboard() {
           <div className="p-4 flex justify-between items-center">
             <div className="flex items-center">
               <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
-                <Bird className="h-7 w-7 text-amber-800" />
-                <span className="ml-2 text-xl font-serif font-medium text-amber-900">KURIFTU</span>
+              <div className="flex items-center">
+            <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
+          </div>
               </div>
               <div className="hidden md:flex ml-8 items-center">
                 <Clock className="h-4 w-4 text-gray-400 mr-2" />
