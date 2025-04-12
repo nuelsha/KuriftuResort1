@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
+import finalvid from "../assets/videos/final.mp4";
+
 import {
   Menu,
   X,
@@ -366,22 +368,22 @@ function HomePage() {
       )}
 
       <section className="relative h-screen">
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <iframe
-            src="https://player.vimeo.com/video/969906959?background=1&autoplay=1&loop=1&byline=0&title=0&muted=1"
-            className="w-[102%] h-[102%] object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-            title="Kuriftu Resorts Background Video"
+        <div className="inset-0 z-0 w-screen h-screen overflow-hidden">
+          <video
+            src={finalvid}
+            className="absolute w-full h-full top-0 left-0 object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
             style={{
               objectFit: "cover",
-              width: "102%",
-              height: "102%",
-              transform: "translate(-50%, -50%) scale(1.02)",
+              width: "100%",
+              height: "700px",
             }}
-          ></iframe>
+          />
         </div>
+
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white">
@@ -410,7 +412,6 @@ function HomePage() {
                       className="text-lg font-medium bg-transparent"
                     >
                       <option>Bishoftu</option>
-                      <option>Lake Tana</option>
                       <option>Entoto</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-gray-400" />

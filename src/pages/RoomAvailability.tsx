@@ -1,5 +1,8 @@
+// Import React and React Router hooks
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
+
+// Import icons from lucide-react
 import {
   Menu,
   Search,
@@ -10,8 +13,18 @@ import {
   Bath,
   X,
 } from "lucide-react";
+
+// Import modal components
 import ReservationModal from "../components/ReservationModal";
 import SuccessModal from "../components/SuccessModal";
+
+// Import firebase Firestore functions
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+// Import your Firebase app from your firebase config file.
+// For example, if your firebase config is in ../lib/firebaseConfig.js:
+import app from "../lib/firebaseConfig";
+
+const db = getFirestore(app);
 
 interface Room {
   id: string;
@@ -128,6 +141,7 @@ export default function RoomAvailability() {
       "Other",
     ];
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [suggestionText, setSuggestionText] = useState("");
     const [showPopup, setShowPopup] = useState(true);
 
     const handleFeedback = (option: string) => {
@@ -138,8 +152,18 @@ export default function RoomAvailability() {
       );
     };
 
-    const handleSubmit = () => {
-      console.log("Selected options:", selectedOptions);
+    const handleSubmitFeedback = async () => {
+      try {
+        const docRef = await addDoc(collection(db, "feedbacks"), {
+          options: selectedOptions,
+          suggestion: suggestionText,
+          timestamp: new Date(),
+        });
+        console.log("Feedback submitted with ID:", docRef.id);
+      } catch (error) {
+        console.error("Error adding feedback:", error);
+      }
+      // Close the popup regardless of success (or display an error if needed)
       setShowFeedbackPopup(false);
     };
 
@@ -185,12 +209,13 @@ export default function RoomAvailability() {
               placeholder="We'd love to hear your feedback!"
               className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none"
               rows={3}
+              value={suggestionText}
               onChange={(e) => setSuggestionText(e.target.value)}
             />
           </div>
           <div className="flex gap-3">
             <button
-              onClick={handleSubmit}
+              onClick={handleSubmitFeedback}
               className="flex-1 bg-[#1a1a1a] text-white py-2 rounded hover:bg-black transition"
             >
               Submit Feedback 🙌
