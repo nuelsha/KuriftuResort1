@@ -44,6 +44,27 @@ interface LocationsData {
   [key: string]: WeatherData
 }
 
+// Add animation to the CSS at the top of the file
+const fadeInStyle = `
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-bounce {
+  animation: bounce 1s ease infinite;
+}
+`
+
 export default function Dashboard() {
   const navigate = useNavigate()
   const { user, signOut } = useAuth()
@@ -61,6 +82,12 @@ export default function Dashboard() {
   const [showResortInfoModal, setShowResortInfoModal] = useState(false)
   const [showRestaurantModal, setShowRestaurantModal] = useState(false)
   const [showResortMapModal, setShowResortMapModal] = useState(false)
+
+  // Add a new state for the detailed feedback modal
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [selectedRating, setSelectedRating] = useState<string | null>(null)
+  const [feedbackText, setFeedbackText] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Update time every minute
   useEffect(() => {
@@ -229,6 +256,20 @@ export default function Dashboard() {
     setTimeout(() => {
       setFeedback(null)
       alert("Thank you for your feedback!")
+    }, 1500)
+  }
+
+  // Add a function to handle feedback submission
+  const handleFeedbackSubmit = () => {
+    setIsSubmitting(true)
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setShowFeedbackModal(false)
+      setSelectedRating(null)
+      setFeedbackText("")
+      // Show success message
+      alert("Thank you for your valuable feedback!")
     }, 1500)
   }
 
@@ -477,6 +518,137 @@ export default function Dashboard() {
     </div>
   )
 
+  // Add the DetailedFeedbackModal component
+  const DetailedFeedbackModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn">
+        <div className="relative">
+          <div className="absolute top-0 left-0 w-full h-16 opacity-20"></div>
+          <div className="pt-12 px-8 pb-6 relative">
+            <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400"></div>
+            <h2 className="text-2xl font-serif text-center text-gray-900 mb-2">Share Your Experience</h2>
+            <p className="text-center text-gray-500 text-sm mb-6">Your feedback helps us enhance your future stays</p>
+
+            <div className="mb-8">
+              <h3 className="text-gray-700 font-medium mb-4">How would you rate your experience?</h3>
+              <div className="flex justify-between items-center px-4">
+                {[
+                  { emoji: "😍", label: "Excellent", value: "excellent" },
+                  { emoji: "😊", label: "Good", value: "good" },
+                  { emoji: "🙂", label: "Okay", value: "okay" },
+                  { emoji: "😔", label: "Poor", value: "poor" },
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setSelectedRating(option.value)}
+                    className={`flex flex-col items-center transition-all transform ${
+                      selectedRating === option.value ? "scale-110" : "opacity-70 hover:opacity-100 hover:scale-105"
+                    }`}
+                  >
+                    <div className={`text-4xl mb-2 ${selectedRating === option.value ? "animate-bounce" : ""}`}>
+                      {option.emoji}
+                    </div>
+                    <span
+                      className={`text-sm ${
+                        selectedRating === option.value ? "text-amber-700 font-medium" : "text-gray-500"
+                      }`}
+                    >
+                      {option.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-gray-700 font-medium mb-3">Tell us about your experience</h3>
+              <div className="relative">
+                <textarea
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="We value your feedback! Please share your thoughts, suggestions, or concerns about your stay..."
+                  className="w-full h-32 p-4 border border-gray-200 rounded-xl focus:ring-amber-500 focus:border-amber-500 text-gray-700 text-sm resize-none bg-gray-50"
+                ></textarea>
+                <div className="absolute bottom-3 right-3 text-xs text-gray-400">{feedbackText.length}/500</div>
+              </div>
+            </div>
+
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3 sm:justify-end">
+              <button
+                onClick={() => setShowFeedbackModal(false)}
+                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleFeedbackSubmit}
+                disabled={!selectedRating || isSubmitting}
+                className={`px-5 py-2.5 rounded-lg text-white text-sm font-medium flex items-center justify-center ${
+                  !selectedRating
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600"
+                } transition-all`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M5 12L10 17L20 7"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Submit Feedback
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-amber-50 px-8 py-4 border-t border-amber-100">
+          <div className="flex items-start">
+            <div className="bg-amber-100 rounded-full p-2 mr-3 mt-1">
+              <Star className="h-4 w-4 text-amber-600 fill-amber-600" />
+            </div>
+            <div>
+              <p className="text-xs text-amber-800">
+                As a valued guest, your feedback earns you <span className="font-medium">25 Kuriftu Stars</span> which
+                you can redeem for exclusive perks during your next stay.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <div className="min-h-screen bg-[#F8F5F2]">
       {/* Main Content Area - No Sidebar */}
@@ -486,8 +658,7 @@ export default function Dashboard() {
           <div className="p-4 flex justify-between items-center">
             <div className="flex items-center">
               <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
-               
-          <div className="flex items-center">
+              <div className="flex items-center">
             <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
           </div>
               </div>
@@ -922,11 +1093,12 @@ export default function Dashboard() {
 
                 {feedback && <div className="text-center text-sm text-gray-500 mb-4">Thank you for your feedback!</div>}
 
-                <div className="w-full text-center">
-                  <button className="bg-amber-50 text-amber-800 text-sm px-4 py-2 rounded-lg hover:bg-amber-100 transition-colors">
-                    Share Detailed Feedback
-                  </button>
-                </div>
+                <button
+                  onClick={() => setShowFeedbackModal(true)}
+                  className="bg-amber-50 text-amber-800 text-sm px-4 py-2 rounded-lg hover:bg-amber-100 transition-colors"
+                >
+                  Share Detailed Feedback
+                </button>
               </div>
             </div>
           </div>
@@ -937,6 +1109,7 @@ export default function Dashboard() {
       {showResortInfoModal && <ResortInfoModal />}
       {showRestaurantModal && <RestaurantHoursModal />}
       {showResortMapModal && <ResortMapModal />}
+      {showFeedbackModal && <DetailedFeedbackModal />}
     </div>
   )
 }
