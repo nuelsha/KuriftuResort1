@@ -30,6 +30,7 @@ import {
   Coffee,
   Scroll,
   Mail,
+  MessageSquare,
 } from "lucide-react"
 import { useAuth } from "../contexts/AuthContext"
 import { useLanguage } from "../contexts/LanguageContext"
@@ -523,7 +524,7 @@ export default function Dashboard() {
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-gray-100 animate-fadeIn">
         <div className="relative">
-          <div className="absolute top-0 left-0 w-full h-16 opacity-20"></div>
+          <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-r from-amber-600 to-amber-400 opacity-20"></div>
           <div className="pt-12 px-8 pb-6 relative">
             <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400"></div>
             <h2 className="text-2xl font-serif text-center text-gray-900 mb-2">Share Your Experience</h2>
@@ -649,6 +650,341 @@ export default function Dashboard() {
     </div>
   )
 
+  // Add the ChatBot component inside the Dashboard component, before the return statement
+
+  // ChatBot component with Kuriftu-specific knowledge
+  const ChatBot = () => {
+    const [chatOpen, setChatOpen] = useState(false)
+    const [chatLanguage, setChatLanguage] = useState("en")
+    const [isLoading, setIsLoading] = useState(false)
+
+    // Chat translations
+    const chatTranslations = {
+      en: {
+        chatSupport: "Kuriftu Support",
+        typeYourMessage: "Type your message...",
+        send: "Send",
+        kuriftuIntro: "Welcome to Kuriftu Resorts & Spa! How can I assist you today?",
+      },
+      am: {
+        chatSupport: "የውጭ ድጋፍ",
+        typeYourMessage: "መልእክት ያስገቡ...",
+        send: "ላክ",
+        kuriftuIntro: "እንኳን ወደ ኩሪፍቱ ሪዞርት እና ስፓ በደህና መጡ! እንዴት ልረዳዎት እችላለሁ?",
+      },
+      fr: {
+        chatSupport: "Assistance Chat",
+        typeYourMessage: "Tapez votre message...",
+        send: "Envoyer",
+        kuriftuIntro: "Bienvenue à Kuriftu Resorts & Spa! Comment puis-je vous aider aujourd'hui?",
+      },
+      om: {
+        chatSupport: "Gargaarsa Chat",
+        typeYourMessage: "Ergaa barreessi...",
+        send: "Ergi",
+        kuriftuIntro: "Baga nagaan Kuriftu Resorts & Spa dhuftan! Akkam isin gargaaruu danda'a?",
+      },
+    }
+
+    const [messages, setMessages] = useState([
+      {
+        text:
+          chatTranslations[chatLanguage].kuriftuIntro ||
+          "Welcome to Kuriftu Resorts & Spa! I'm here to help with any questions about our resorts, bookings, or services.",
+        sender: "bot",
+      },
+    ])
+    const [currentMessage, setCurrentMessage] = useState("")
+
+    // Kuriftu-specific knowledge base
+    const kuriftuKnowledge = {
+      en: {
+        about:
+          "Kuriftu Resorts & Spa is a premier luxury resort chain in Ethiopia with locations in Bishoftu, Lake Tana, and Entoto. We offer world-class accommodations, dining, and spa experiences.",
+        locations:
+          "We have three beautiful locations:\n1. Kuriftu Resort & Spa Bishoftu (our flagship)\n2. Kuriftu Resort & Spa Lake Tana\n3. Kuriftu Resort & Spa Entoto",
+        amenities:
+          "Our resorts feature:\n- Luxury accommodations\n- Fine dining restaurants\n- Spa & wellness centers\n- Swimming pools\n- Conference facilities\n- Beautiful natural surroundings",
+        contact:
+          "You can reach us at:\nPhone: +251 11 667 0808\nEmail: info@kurifturesorts.com\nWebsite: www.kurifturesorts.com",
+        booking:
+          "You can book directly through our website or by contacting our reservations team. Would you like me to guide you to our booking page?",
+        spa: "Our award-winning spas offer:\n- Traditional Ethiopian treatments\n- Massage therapies\n- Beauty services\n- Yoga sessions\n- Steam and sauna facilities",
+        dining:
+          "We offer exceptional dining experiences with:\n- Ethiopian cuisine\n- International dishes\n- Lakefront dining\n- Private dining options\n- Carefully curated wine lists",
+      },
+      am: {
+        about:
+          "ኩሪፍቱ ሪዞርት እና ስፓ በኢትዮጵያ ውስጥ ከፍተኛ ደረጃ ያለው የሪዞርት ሰንሰለት ሲሆን በቢሾፍቱ፣ በጣና ሐይቅ እና በእንጦጦ ቦታዎች አሉት። ዓለም አቀፍ ደረጃውን የጠበቀ መኖሪያ፣ ምግብ እና የስፓ ተሞክሮዎችን እናቀርባለን።",
+        locations:
+          "ሶስት ቆንጆ ቦታዎች አሉን፡\n1. ኩሪፍቱ ሪዞርት እና ስፓ ቢሾፍቱ (ዋናው ሪዞርት)\n2. ኩሪፍቱ ሪዞርት እና ስፓ ጣና ሐይቅ\n3. ኩሪፍቱ ሪዞርት እና ስፓ እንጦጦ",
+        amenities:
+          "ሪዞርቶቻችን የሚያካትቱት፡\n- ዘመናዊ መኖሪያዎች\n- ጥራት ያለው ምግብ ቤቶች\n- ስፓ እና ጤና ማዕከላት\n- የዋና መዋኛ ገንዳዎች\n- የስብሰባ ማዕከላት\n- ውብ የተፈጥሮ አካባቢ",
+        contact:
+          "እንደዚህ ሊያገኙን ይችላሉ፡\nስልክ፡ +251 11 667 0808\nኢሜይል፡ info@kurifturesorts.com\nድረ-ገጽ፡ www.kurifturesorts.com",
+        booking: "በቀጥታ በድረ-ገጻችን ወይም የእኛን የመጠባበቂያ ቡድን በማነጋገር ቦታ ማስያዝ ይችላሉ። ወደ የቦታ ማስያዣ ገጽ እንድመራዎት ይፈልጋሉ?",
+        spa: "ሽልማት ያገኙ ስፓዎቻችን የሚያቀርቡት፡\n- ባህላዊ የኢትዮጵያ ህክምናዎች\n- የማሳጅ ህክምናዎች\n- የውበት አገልግሎቶች\n- የዮጋ ክፍለ ጊዜዎች\n- የእንፋሎት እና ሳውና ተቋማት",
+        dining:
+          "እኛ ልዩ የምግብ ተሞክሮዎችን እናቀርባለን፡\n- የኢትዮጵያ ምግቦች\n- ዓለም አቀፍ ምግቦች\n- በሐይቅ ዳርቻ ምግብ መመገብ\n- የግል የምግብ አማራጮች\n- በጥንቃቄ የተዘጋጁ የወይን ዝርዝሮች",
+      },
+      fr: {
+        about:
+          "Kuriftu Resorts & Spa est une chaîne de complexes hôteliers de luxe en Éthiopie avec des emplacements à Bishoftu, au lac Tana et à Entoto. Nous offrons des hébergements, des restaurants et des expériences de spa de classe mondiale.",
+        locations:
+          "Nous avons trois beaux emplacements :\n1. Kuriftu Resort & Spa Bishoftu (notre fleuron)\n2. Kuriftu Resort & Spa Lac Tana\n3. Kuriftu Resort & Spa Entoto",
+        amenities:
+          "Nos complexes proposent :\n- Hébergements de luxe\n- Restaurants gastronomiques\n- Centres de spa et bien-être\n- Piscines\n- Salles de conférence\n- Magnifiques environnements naturels",
+        contact:
+          "Vous pouvez nous joindre à :\nTéléphone : +251 11 667 0808\nEmail : info@kurifturesorts.com\nSite web : www.kurifturesorts.com",
+        booking:
+          "Vous pouvez réserver directement via notre site web ou en contactant notre équipe de réservation. Souhaitez-vous que je vous guide vers notre page de réservation ?",
+        spa: "Nos spas primés offrent :\n- Traitements traditionnels éthiopiens\n- Thérapies de massage\n- Services de beauté\n- Sessions de yoga\n- Installations de hammam et sauna",
+        dining:
+          "Nous offrons des expériences culinaires exceptionnelles avec :\n- Cuisine éthiopienne\n- Plats internationaux\n- Dîner au bord du lac\n- Options de restauration privée\n- Cartes des vins soigneusement sélectionnées",
+      },
+      om: {
+        about:
+          "Kuriftu Resorts & Spa Itoophiyaa keessatti bakka Bishooftuu, Haroo Taanaa fi Entotoo jiran irratti kuusaa risoorti luksii guddaa dha. Bakka jireenyaa, nyaata, fi muuxannoo spaa sadarkaa addunyaa qabaniif dhiyeessina.",
+        locations:
+          "Bakka bareeda sadii qabna:\n1. Kuriftu Resort & Spa Bishooftuu (kan ijaarsa keenya)\n2. Kuriftu Resort & Spa Haroo Taanaa\n3. Kuriftu Resort & Spa Entotoo",
+        amenities:
+          "Risoortiiwwan keenya kan qaban:\n- Bakka jireenyaa luksii\n- Restoraantii nyaata gaarii\n- Wiirtuu spaa fi fayyaa\n- Bishaan daakuu\n- Wiirtuu konfaransii\n- Naannoo uumamaa bareeda",
+        contact:
+          "Kanaan nu quunnamuu dandeessu:\nBilbila: +251 11 667 0808\nEmail: info@kurifturesorts.com\nMarsariitii: www.kurifturesorts.com",
+        booking:
+          "Kallattiin marsariitii keenya irraa ykn garee qindeessituu keenya quunnamuun bakka qabachuu dandeessu. Gara fuula qabannaa keenyaatti akka isin qajeelchu barbaadduu?",
+        spa: "Spaa badhaasa argate keenyi kan dhiyeessu:\n- Yaalota aadaa Itoophiyaa\n- Yaalota maasaajii\n- Tajaajila miidhagina\n- Seshinoota yoogaa\n- Meeshaalee buufata fi soonaa",
+        dining:
+          "Muuxannoo nyaataa addaa kan qabnuun dhiyeessina:\n- Nyaata Itoophiyaa\n- Nyaata addunyaa\n- Nyaata cinaa haroo\n- Filannoo nyaata dhuunfaa\n- Tarree wayinii of eeggannoon qophaa'e",
+      },
+    }
+
+    // Update messages when language changes
+    useEffect(() => {
+      setMessages([
+        {
+          text:
+            chatTranslations[chatLanguage]?.kuriftuIntro ||
+            "Welcome to Kuriftu Resorts & Spa! I'm here to help with any questions about our resorts, bookings, or services.",
+          sender: "bot",
+        },
+      ])
+    }, [chatLanguage])
+
+    // Handle common questions without API call
+    const handleCommonQuestion = (question) => {
+      const lowerQuestion = question.toLowerCase()
+      const knowledgeBase = kuriftuKnowledge[chatLanguage] || kuriftuKnowledge.en
+
+      if (
+        lowerQuestion.includes("about") ||
+        lowerQuestion.includes("what is kuriftu") ||
+        lowerQuestion.includes("ኩሪፍቱ") ||
+        lowerQuestion.includes("ምንድን ነው")
+      ) {
+        return knowledgeBase.about
+      } else if (
+        lowerQuestion.includes("location") ||
+        lowerQuestion.includes("where") ||
+        lowerQuestion.includes("ቦታ") ||
+        lowerQuestion.includes("የት")
+      ) {
+        return knowledgeBase.locations
+      } else if (
+        lowerQuestion.includes("amenit") ||
+        lowerQuestion.includes("facilit") ||
+        lowerQuestion.includes("አገልግሎት") ||
+        lowerQuestion.includes("መገልገያ")
+      ) {
+        return knowledgeBase.amenities
+      } else if (
+        lowerQuestion.includes("contact") ||
+        lowerQuestion.includes("how to reach") ||
+        lowerQuestion.includes("ማግኘት") ||
+        lowerQuestion.includes("ማነጋገር")
+      ) {
+        return knowledgeBase.contact
+      } else if (
+        lowerQuestion.includes("book") ||
+        lowerQuestion.includes("reserv") ||
+        lowerQuestion.includes("ቦታ") ||
+        lowerQuestion.includes("ማስያዝ")
+      ) {
+        return knowledgeBase.booking
+      } else if (
+        lowerQuestion.includes("spa") ||
+        lowerQuestion.includes("wellness") ||
+        lowerQuestion.includes("ስፓ") ||
+        lowerQuestion.includes("ጤና")
+      ) {
+        return knowledgeBase.spa
+      } else if (
+        lowerQuestion.includes("dining") ||
+        lowerQuestion.includes("food") ||
+        lowerQuestion.includes("restaurant") ||
+        lowerQuestion.includes("ምግብ") ||
+        lowerQuestion.includes("ምግብ ቤት")
+      ) {
+        return knowledgeBase.dining
+      }
+
+      return null
+    }
+
+    const sendMessage = async () => {
+      if (!currentMessage.trim()) return
+
+      // Add user's message
+      const userMessage = { text: currentMessage, sender: "user" }
+      setMessages((prev) => [...prev, userMessage])
+      const textToSend = currentMessage
+      setCurrentMessage("")
+      setIsLoading(true)
+
+      // First check if it's a common question
+      const commonResponse = handleCommonQuestion(textToSend)
+      if (commonResponse) {
+        setTimeout(() => {
+          setMessages((prev) => [...prev, { text: commonResponse, sender: "bot" }])
+          setIsLoading(false)
+        }, 500)
+        return
+      }
+
+      try {
+        const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer 7pe3roabiqOZV3bUCcVsevNwX3D3pyxL`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "mistral-medium",
+            messages: [
+              {
+                role: "system",
+                content: `You are a helpful assistant for Kuriftu Resorts & Spa, a luxury resort chain in Ethiopia. 
+              Provide concise, friendly responses about the resorts, amenities, booking, and Ethiopian hospitality. 
+              Current locations: Bishoftu, Lake Tana, and Entoto. Key features: luxury accommodations, fine dining, 
+              spa services, and beautiful natural settings. For booking questions, direct them to the website or 
+              reservation team. Keep responses under 3 sentences unless more detail is requested.
+              
+              If the user is writing in Amharic (አማርኛ), respond in Amharic. If they write in French, respond in French.
+              If they write in Afaan Oromo, respond in Afaan Oromo. Otherwise respond in English.`,
+              },
+              {
+                role: "user",
+                content: textToSend,
+              },
+            ],
+            max_tokens: 300,
+          }),
+        })
+
+        const data = await response.json()
+        const botReply =
+          data?.choices?.[0]?.message?.content ||
+          "I couldn't process your request. Please contact Kuriftu directly at info@kurifturesorts.com"
+
+        setMessages((prev) => [...prev, { text: botReply, sender: "bot" }])
+      } catch (err) {
+        console.error("API error:", err)
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: "Our chat service is currently unavailable. Please contact Kuriftu Resorts directly at info@kurifturesorts.com or call +251 11 667 0808.",
+            sender: "bot",
+          },
+        ])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault()
+        sendMessage()
+      }
+    }
+
+    return (
+      <div className="fixed bottom-4 right-4 z-50">
+        {chatOpen ? (
+          <div className="bg-white shadow-xl rounded-lg w-80 h-96 flex flex-col">
+            <div className="bg-amber-800 text-white p-4 flex flex-col rounded-t-lg">
+              <div className="flex justify-between items-center">
+                <span>{chatTranslations[chatLanguage]?.chatSupport || "Kuriftu Support"}</span>
+                <button onClick={() => setChatOpen(false)}>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="mt-2">
+                <select
+                  value={chatLanguage}
+                  onChange={(e) => setChatLanguage(e.target.value)}
+                  className="text-sm p-1 rounded bg-white text-black border border-gray-300"
+                >
+                  <option value="en">English</option>
+                  <option value="am">አማርኛ</option>
+                  <option value="fr">Français</option>
+                  <option value="om">Afaan Oromoo</option>
+                </select>
+              </div>
+            </div>
+            <div className="p-4 flex-grow overflow-y-auto space-y-2">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`p-2 rounded-lg ${
+                    msg.sender === "user"
+                      ? "bg-amber-100 ml-auto text-right max-w-[80%]"
+                      : "bg-gray-100 mr-auto text-left max-w-[80%]"
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              ))}
+              {isLoading && (
+                <div className="bg-gray-100 self-start text-left max-w-xs p-2 rounded-lg">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-amber-600 animate-bounce"></div>
+                    <div className="w-2 h-2 rounded-full bg-amber-600 animate-bounce delay-100"></div>
+                    <div className="w-2 h-2 rounded-full bg-amber-600 animate-bounce delay-200"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="p-4 flex">
+              <input
+                type="text"
+                placeholder={chatTranslations[chatLanguage]?.typeYourMessage || "Type your message..."}
+                value={currentMessage}
+                onChange={(e) => setCurrentMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full border rounded-l-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              />
+              <button
+                onClick={sendMessage}
+                disabled={isLoading}
+                className="bg-amber-800 text-white px-4 py-2 rounded-r-lg hover:bg-amber-900 transition disabled:opacity-50"
+              >
+                {chatTranslations[chatLanguage]?.send || "Send"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="bg-amber-800 p-3 rounded-full shadow-lg hover:bg-amber-900 transition"
+          >
+            <MessageSquare className="w-6 h-6 text-white" />
+          </button>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#F8F5F2]">
       {/* Main Content Area - No Sidebar */}
@@ -658,9 +994,8 @@ export default function Dashboard() {
           <div className="p-4 flex justify-between items-center">
             <div className="flex items-center">
               <div className="flex items-center cursor-pointer" onClick={() => navigate("/")}>
-              <div className="flex items-center">
-            <img src="https://kurifturesorts.com/_nuxt/img/logo.9415905.svg" alt="Kuriftu Resorts" className="h-12" />
-          </div>
+                <Bird className="h-7 w-7 text-amber-800" />
+                <span className="ml-2 text-xl font-serif font-medium text-amber-900">KURIFTU</span>
               </div>
               <div className="hidden md:flex ml-8 items-center">
                 <Clock className="h-4 w-4 text-gray-400 mr-2" />
@@ -1110,6 +1445,9 @@ export default function Dashboard() {
       {showRestaurantModal && <RestaurantHoursModal />}
       {showResortMapModal && <ResortMapModal />}
       {showFeedbackModal && <DetailedFeedbackModal />}
+
+      {/* Chatbot Assistance */}
+      <ChatBot />
     </div>
   )
 }
